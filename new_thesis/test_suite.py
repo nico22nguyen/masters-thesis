@@ -2,10 +2,9 @@ import gc
 import numpy as np
 import pandas as pd
 import tensorflow as tf
-from keras.applications import ResNet50
-from keras.models import Sequential  # Model type to be used
-from keras.layers import Dense, Conv2D, Flatten, MaxPooling2D, Dropout
 from keras.utils import to_categorical
+
+from model_garden import ModelGarden
 
 class Tester:
 	def __init__(self, base_csv: str, shape: tuple[int, ...], epochs=100, learning_rate=4e-4, batch_size=256) -> None:
@@ -24,9 +23,12 @@ class Tester:
 		self.learning_rate = learning_rate
 		self.batch_size = batch_size
 
+		# define models used for evaluation
+		model_garden = ModelGarden(shape, self.num_classes)
+
 		self.model_generators = [
-			self.create_sequential_model,
-			self.create_resnet_model
+			model_garden.create_sequential_model,
+			model_garden.create_resnet_model
 		]
 
 	def evaluate_reductions(self, reduced_csvs: list[str], validation: tuple[np.ndarray, np.ndarray]) -> list[float]:
@@ -81,29 +83,6 @@ class Tester:
 		np.random.shuffle(X)
 		np.random.seed(seed)
 		np.random.shuffle(Y)
-
-	# USE MORE COMPLEX MODEL
-	def create_resnet_model(self):
-		print(self.shape)
-		return ResNet50(weights=None, input_shape=self.shape, pooling='max', classes=self.num_classes, classifier_activation='softmax')
-		
-	def create_sequential_model(self):
-		return Sequential([
-			Conv2D(32, 3, padding='same', input_shape=self.shape, activation='relu'),
-			Conv2D(32, 3, activation='relu'),
-			MaxPooling2D(),
-			Dropout(0.25),
-
-			Conv2D(64, 3, padding='same', activation='relu'),
-			Conv2D(64, 3, activation='relu'),
-			MaxPooling2D(),
-			Dropout(0.25),
-
-			Flatten(),
-			Dense(512, activation='relu'),
-			Dropout(0.5),
-			Dense(self.num_classes, activation='softmax'),
-		])
 
 if __name__ == '__main__':
 	print('Testing load_base_csv() on cifar csv:\n')
