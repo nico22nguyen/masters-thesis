@@ -80,8 +80,8 @@ if __name__ == '__main__':
 	print('Testing load_base_csv() on cifar csv:\n')
 	print('Loading csv...')
 	tester = Tester('datasets/cifar_base.csv', (32, 32, 3))
-	val_x, val_y = tester.reduce_dataset(np.random.randint(0, tester.base.shape[0], 10))
-	tester.evaluate_reductions(['datasets/cifar_indices.csv', 'datasets/cifar_indices_1.csv', 'datasets/cifar_indices_123.csv'], (val_x, val_y))
+	val_x, val_y = tester.reduce_dataset(np.random.randint(0, tester.base.shape[0], 1000))
+	accuracies = tester.evaluate_reductions(['datasets/cifar_indices_1.csv', 'datasets/cifar_indices_2.csv', 'datasets/cifar_indices_3.csv'], (val_x, val_y))
 
 	# print(f'reduced x <shape: {reduced_x.shape}>\n', reduced_x, '\n')
 	# print(f'reduced y <shape: {reduced_y.shape}>\n', reduced_y)
