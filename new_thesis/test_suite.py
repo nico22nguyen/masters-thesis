@@ -76,13 +76,6 @@ class Tester:
 		x = x.reshape(new_shape) 
 		
 		return x, y
-	
-	# from old reduction
-	def shuffle_data(self, X: np.ndarray, Y: np.ndarray, seed: int) -> None:
-		np.random.seed(seed)
-		np.random.shuffle(X)
-		np.random.seed(seed)
-		np.random.shuffle(Y)
 
 if __name__ == '__main__':
 	print('Testing load_base_csv() on cifar csv:\n')
