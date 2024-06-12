@@ -38,11 +38,10 @@ class Tester:
 		
 		accuracies = []
 		for index_csv_path in reduced_csvs:
+			print(f'evaluating: {index_csv_path.split("/")[-1]}...')
 			indices = pd.read_csv(index_csv_path, header=None).to_numpy().squeeze()
 			reduced_x, reduced_y = self.reduce_dataset(indices)
 
-			print(f'reduced_x.shape: {reduced_x.shape}, reduced_y.shape: {reduced_y.shape}')
-			
 			acclist = []
 			for i, model_generator in enumerate(self.model_generators):
 				# train model and record training/validation accuracy
