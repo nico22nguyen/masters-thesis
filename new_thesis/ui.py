@@ -18,7 +18,7 @@ class SimpleUI:
         self.base_upload_label.pack(side='left', padx=25)
         self.base_upload_btn.pack(side='right', padx=25)
 
-        # Base csv upload button
+        # Index csv upload button
         reduction_csv_frame=Frame(root, width=400, height=200)
         reduction_csv_frame.pack(fill='x', pady=10)
         self.reduction_upload_label = tk.Label(reduction_csv_frame, text='Reduction indices (.csv):')
