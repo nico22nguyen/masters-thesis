@@ -1,5 +1,5 @@
 from keras.applications import ResNet50
-from keras.models import Sequential
+from keras.models import Sequential, load_model
 from keras.layers import Dense, Conv2D, Flatten, MaxPooling2D, Dropout
 
 class ModelGarden:
@@ -27,3 +27,7 @@ class ModelGarden:
 			Dropout(0.5),
 			Dense(self.num_classes, activation='softmax'),
 		])
+	
+	@staticmethod
+	def load_tf_model(path_to_model: str):
+		return load_model(path_to_model)

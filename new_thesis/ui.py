@@ -26,6 +26,14 @@ class SimpleUI:
         self.reduction_upload_label.pack(side='left', padx=25)
         self.reduction_upload_btn.pack(side='right', padx=25)
         
+        # Custom models upload button
+        custom_models_frame=Frame(root, width=400, height=200)
+        custom_models_frame.pack(fill='x', pady=10)
+        self.model_upload_label = tk.Label(custom_models_frame, text='Custom Models (.keras) [Optional]:')
+        self.model_upload_btn = tk.Button(custom_models_frame, text='Upload File(s)', command=self.upload_custom_models)
+        self.model_upload_label.pack(side='left', padx=25)
+        self.model_upload_btn.pack(side='right', padx=25)
+        
         # Checkboxes
         self.check_var1 = tk.IntVar()
         self.check_var2 = tk.IntVar()
@@ -54,6 +62,11 @@ class SimpleUI:
         self.reduction_csv_paths = filedialog.askopenfilenames(title='Select Files')
         if self.reduction_csv_paths:
             messagebox.showinfo('Selected Files', '\n'.join(self.reduction_csv_paths))
+
+    def upload_custom_models(self):
+        self.custom_model_paths = filedialog.askopenfilenames(title='Select Files')
+        if self.custom_model_paths:
+            messagebox.showinfo('Selected Files', '\n'.join(self.custom_model_paths))
 
     def upload_base(self):
         self.base_csv_path = filedialog.askopenfilename(title='Select File')
