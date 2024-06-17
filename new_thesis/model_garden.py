@@ -97,7 +97,7 @@ class TorchModel(ModelInterface):
 				targets_direct = torch.argmax(targets, dim=1)
 				correct += predicted.eq(targets_direct).sum().item()
 
-		return 100.*correct/total
+		return correct / total
 
 	def load_model(self, path: str):
 		return torch.jit.load(path)
