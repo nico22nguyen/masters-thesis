@@ -6,7 +6,7 @@ from keras.applications import ResNet50
 from keras.models import Sequential, load_model
 from keras.layers import Dense, Conv2D, Flatten, MaxPooling2D, Dropout
 from torch.utils.data import DataLoader, Dataset
-
+from torchvision.models import efficientnet_b0, mobilenet_v2
 from resnet import ResNet34
 
 class ModelInterface:
@@ -38,6 +38,12 @@ class TorchModel(ModelInterface):
 		super().__init__(model)
 		self.optimizer = torch.optim.SGD(model.parameters(), lr=0.1, momentum=0.9, weight_decay=1e-4)
 		self.criterion = torch.nn.CrossEntropyLoss()
+
+		if not torch.cuda.is_available():
+			self.model = model
+
+		model = model.to('cuda')
+		self.model = torch.nn.DataParallel(model)
 
 	def get_accuracies(self, x: np.ndarray, y: np.ndarray, epochs: int, batch_size: int, validation_data: tuple[np.ndarray, np.ndarray]) -> tuple[float, float]:
 		weights_dtype = next(self.model.parameters()).dtype
@@ -127,12 +133,15 @@ class ModelGarden:
 		return TensorFlowModel(model)
 	
 	def create_torch_resnet(self):
-		net = ResNet34()
-		if not torch.cuda.is_available():
-			return net
-
-		net = net.to('cuda')
-		net = torch.nn.DataParallel(net)
+		net = ResNet34(num_classes=self.num_classes)
+		return TorchModel(net)
+	
+	def create_efficient_net_model(self):
+		net = efficientnet_b0(weights=None, progress=False, num_classes=self.num_classes)
+		return TorchModel(net)
+	
+	def create_mobile_net_model(self):
+		net = mobilenet_v2(weights=None, progress=False, num_classes=self.num_classes)
 		return TorchModel(net)
 	
 

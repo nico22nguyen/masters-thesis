@@ -27,6 +27,8 @@ class Tester:
 		model_garden = ModelGarden(shape, self.num_classes)
 
 		self.model_generators = [
+			model_garden.create_mobile_net_model,
+			model_garden.create_efficient_net_model,
 			model_garden.create_torch_resnet,
 			model_garden.create_sequential_model,
 			model_garden.create_resnet_model
