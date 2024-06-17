@@ -1,10 +1,10 @@
+from model_garden import ModelGarden, ModelInterface
+
 import gc
 import numpy as np
 import pandas as pd
 import tensorflow as tf
 from keras.utils import to_categorical
-
-from model_garden import ModelGarden
 
 class Tester:
 	def __init__(self, base_csv: str, shape: tuple[int, ...], epochs=100, learning_rate=4e-4, batch_size=256) -> None:
@@ -27,6 +27,7 @@ class Tester:
 		model_garden = ModelGarden(shape, self.num_classes)
 
 		self.model_generators = [
+			model_garden.create_torch_resnet,
 			model_garden.create_sequential_model,
 			model_garden.create_resnet_model
 		]
@@ -45,19 +46,18 @@ class Tester:
 			acclist = []
 			for i, model_generator in enumerate(self.model_generators):
 				# train model and record training/validation accuracy
-				model = model_generator()
-				model.compile(loss=tf.keras.losses.CategoricalCrossentropy(), optimizer=tf.keras.optimizers.Adam(learning_rate=self.learning_rate), metrics=['categorical_accuracy'])
+				model: ModelInterface = model_generator()
 				
-				history = model.fit(reduced_x, reduced_y, epochs=self.epochs, batch_size=self.batch_size, verbose=0, validation_data=validation)
-				del model
-				acc = history.history['categorical_accuracy'][-1]
-				valacc = history.history['val_categorical_accuracy'][-1]
+				acc, valacc = model.get_accuracies(reduced_x, reduced_y, epochs=self.epochs, batch_size=self.batch_size, validation_data=validation)
+				# del model
+				# acc = history.history['categorical_accuracy'][-1]
+				# valacc = history.history['val_categorical_accuracy'][-1]
 				print(f"  MODEL {i + 1}: train acc = {acc:.5f} val acc = {valacc:.5f}")
 
 				acclist.append(valacc)
 
 				# clean up, important for conserving VRAM
-				del history
+				# del history
 				gc.collect()
 	
 			accuracies.append(np.array(acclist).mean())
