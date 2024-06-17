@@ -101,5 +101,5 @@ class ResNet(nn.Module):
         out = self.linear(out)
         return out
 
-def ResNet34():
-    return ResNet(BasicBlock, [3, 4, 6, 3])
+def ResNet34(num_classes: int):
+    return ResNet(BasicBlock, [3, 4, 6, 3], num_classes=num_classes)
