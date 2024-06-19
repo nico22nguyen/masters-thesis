@@ -4,12 +4,11 @@ from tkinter import filedialog, messagebox, Frame
 
 class SimpleUI:
     def __init__(self, root: tk.Tk):
-        self.root = root
     
-        self.root.title('Dataset Reduction Test Suite')
+        root.title('Dataset Reduction Test Suite')
 
         # Set default window size
-        self.root.geometry('450x450')
+        root.geometry('450x450')
         
         # Base csv upload button
         base_csv_frame=Frame(root, width=400, height=200)
