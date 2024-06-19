@@ -12,12 +12,12 @@ class ModelGarden:
 		self.input_shape = input_shape
 		self.num_classes = num_classes
 	
-	def create_resnet_model(self) -> ModelInterface:
+	def resnet_50(self) -> ModelInterface:
 		model = ResNet50(weights=None, input_shape=self.input_shape, pooling='max', classes=self.num_classes, classifier_activation='softmax')
 		model.compile(loss=CategoricalCrossentropy(), metrics=['categorical_accuracy'])
 		return TensorFlowModel(model)
 		
-	def create_sequential_model(self) -> ModelInterface:
+	def sequential(self) -> ModelInterface:
 		model = Sequential([
 			Conv2D(32, 3, padding='same', input_shape=self.input_shape, activation='relu'),
 			Conv2D(32, 3, activation='relu'),
@@ -37,14 +37,14 @@ class ModelGarden:
 		model.compile(loss=CategoricalCrossentropy(), metrics=['categorical_accuracy'])
 		return TensorFlowModel(model)
 	
-	def create_torch_resnet(self) -> ModelInterface:
+	def resnet_34(self) -> ModelInterface:
 		net = ResNet34(num_classes=self.num_classes)
 		return TorchModel(net)
 	
-	def create_efficient_net_model(self) -> ModelInterface:
+	def efficient_net(self) -> ModelInterface:
 		net = efficientnet_b0(weights=None, progress=False, num_classes=self.num_classes)
 		return TorchModel(net)
 	
-	def create_mobile_net_model(self) -> ModelInterface:
+	def mobile_net(self) -> ModelInterface:
 		net = mobilenet_v2(weights=None, progress=False, num_classes=self.num_classes)
 		return TorchModel(net)

@@ -27,11 +27,11 @@ class Tester:
 		model_garden = ModelGarden(shape, self.num_classes)
 
 		self.model_generators = [
-			model_garden.create_mobile_net_model,
-			model_garden.create_efficient_net_model,
-			model_garden.create_torch_resnet,
-			model_garden.create_sequential_model,
-			model_garden.create_resnet_model
+			model_garden.mobile_net,
+			model_garden.efficient_net,
+			model_garden.resnet_34,
+			model_garden.sequential,
+			model_garden.resnet_50
 		]
 
 	def evaluate_reductions(self, reduced_csvs: list[str], validation: tuple[np.ndarray, np.ndarray]) -> list[float]:
