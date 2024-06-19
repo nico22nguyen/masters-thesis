@@ -83,14 +83,17 @@ class SimpleUI:
             selected_options.append('Option 2')
         
         shape_input = self.shape_input.get()
-        input_clean = shape_input.replace(' ', '').replace('(', '').replace(')', '')
-        dim_list = input_clean.split(',')
-        self.input_shape = tuple([int(dim) for dim in dim_list])
+        if shape_input:
+            input_clean = shape_input.replace(' ', '').replace('(', '').replace(')', '')
+            dim_list = input_clean.split(',')
+            input_shape = tuple([int(dim) for dim in dim_list])
+        else:
+            input_shape = None
 
         number_input = self.number_entry.get()
         
         result = f'Selected Options: {", ".join(selected_options)}\n'
-        result += f'Parsed Input Shape: {self.input_shape}\n'
+        result += f'Parsed Input Shape: {input_shape}\n'
         result += f'Number Input: {number_input}'
         
         messagebox.showinfo('Submitted Data', result)
