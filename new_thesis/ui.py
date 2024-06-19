@@ -4,6 +4,9 @@ from tkinter import filedialog, messagebox, Frame
 
 class SimpleUI:
     def __init__(self, root: tk.Tk):
+        self.base_csv_path = None
+        self.reduction_csv_paths = None
+        self.custom_model_paths = []
     
         root.title('Dataset Reduction Test Suite')
 
@@ -96,6 +99,35 @@ class SimpleUI:
             messagebox.showinfo('Selected File', self.base_csv_path)
 
     def submit(self):
+        shape_input = self.shape_input.get()
+        
+        # ensure required fields are present
+        required = {
+            'Base csv path': self.base_csv_path,
+            'Reduction csv path(s)': self.reduction_csv_paths,
+            'Input shape': shape_input
+        }
+        missing = [key for key in required if not required[key]]
+        if len(missing) > 0:
+            messagebox.showinfo('Missing Fields', f'Missing required fields: {", ".join(missing)}')
+            return
+        
+        # ensure input shape is correctly formatted
+        if shape_input:
+            input_clean = shape_input.replace(' ', '').replace('(', '').replace(')', '')
+            dim_list = input_clean.split(',')
+            dim_list_int = []
+            for dim in dim_list:
+                if len(dim) == 0: continue
+                if not dim.isdecimal():
+                    messagebox.showinfo('Bad Format', f'Incorrect format for Input Shape. Problem near: "{dim}"')
+                    return
+                dim_list_int.append(int(dim))
+
+            input_shape = tuple(dim_list_int)
+        else:
+            input_shape = None
+
         selected_models = []
         if self.resnet_simple.get():
             selected_models.append('resnet_simple')
@@ -107,14 +139,6 @@ class SimpleUI:
             selected_models.append('efficient_net')
         if self.mobile_net.get():
             selected_models.append('mobile_net')
-        
-        shape_input = self.shape_input.get()
-        if shape_input:
-            input_clean = shape_input.replace(' ', '').replace('(', '').replace(')', '')
-            dim_list = input_clean.split(',')
-            input_shape = tuple([int(dim) for dim in dim_list])
-        else:
-            input_shape = None
 
         number_input = self.number_entry.get()
         
