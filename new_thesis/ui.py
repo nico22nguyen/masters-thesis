@@ -43,10 +43,12 @@ class SimpleUI:
         self.checkbox2.pack(pady=5)
         
         # Text input field
-        self.text_label = tk.Label(root, text='Text Input:')
-        self.text_label.pack(pady=5)
-        self.text_entry = tk.Entry(root)
-        self.text_entry.pack(pady=5)
+        shape_frame=Frame(root, width=400, height=200)
+        shape_frame.pack(fill='x', pady=10)
+        self.shape_label = tk.Label(shape_frame, text='Input Shape (comma separated, no batch dim):')
+        self.shape_input = tk.Entry(shape_frame)
+        self.shape_label.pack(side='left', padx=25)
+        self.shape_input.pack(side='right', padx=25)
         
         # Number input field
         self.number_label = tk.Label(root, text='Number Input:')
@@ -80,11 +82,15 @@ class SimpleUI:
         if self.check_var2.get():
             selected_options.append('Option 2')
         
-        text_input = self.text_entry.get()
+        shape_input = self.shape_input.get()
+        input_clean = shape_input.replace(' ', '').replace('(', '').replace(')', '')
+        dim_list = input_clean.split(',')
+        self.input_shape = tuple([int(dim) for dim in dim_list])
+
         number_input = self.number_entry.get()
         
         result = f'Selected Options: {", ".join(selected_options)}\n'
-        result += f'Text Input: {text_input}\n'
+        result += f'Parsed Input Shape: {self.input_shape}\n'
         result += f'Number Input: {number_input}'
         
         messagebox.showinfo('Submitted Data', result)
