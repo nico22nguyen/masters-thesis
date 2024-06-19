@@ -56,6 +56,12 @@ class SimpleUI:
         self.efficient_net_btn.grid(row=1, column=0)
         self.mobile_net_btn.grid(row=1, column=1)
         
+        self.resnet_simple.set(True)
+        self.resnet_34.set(True)
+        self.resnet_50.set(True)
+        self.efficient_net.set(True)
+        self.mobile_net.set(True)
+        
         # Text input field
         shape_frame=Frame(root, width=400, height=200)
         shape_frame.pack(fill='x', pady=10)
