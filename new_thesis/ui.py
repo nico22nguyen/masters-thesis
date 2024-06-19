@@ -8,7 +8,7 @@ class SimpleUI:
         self.root.title('Dataset Reduction Test Suite')
 
         # Set default window size
-        self.root.geometry('400x400')
+        self.root.geometry('450x450')
         
         # Base csv upload button
         base_csv_frame=Frame(root, width=400, height=200)
