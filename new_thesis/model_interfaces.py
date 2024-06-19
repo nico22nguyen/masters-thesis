@@ -1,4 +1,5 @@
 import torch
+from typing_extensions import Self
 from numpy import ndarray
 import tensorflow as tf
 
@@ -12,7 +13,8 @@ class ModelInterface:
 	def get_accuracies(self, x: ndarray, y: ndarray, epochs: int, batch_size: int, validation_data: tuple[ndarray, ndarray]) -> tuple[float, float]:
 		pass
 
-	def load_model(self, path: str):
+	@staticmethod
+	def load_model(path: str) -> Self:
 		pass
 
 class TensorFlowModel(ModelInterface):
@@ -26,7 +28,8 @@ class TensorFlowModel(ModelInterface):
 
 		return acc, valacc
 
-	def load_model(self, path: str):
+	@staticmethod
+	def load_model(path: str) -> Self:
 		return load_model(path)
 	
 class TorchModel(ModelInterface):
@@ -95,7 +98,8 @@ class TorchModel(ModelInterface):
 
 		return correct / total
 
-	def load_model(self, path: str):
+	@staticmethod
+	def load_model(path: str) -> Self:
 		return torch.jit.load(path)
 
 class CustomDataset(Dataset):
