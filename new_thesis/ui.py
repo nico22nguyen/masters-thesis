@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import filedialog, messagebox, Frame
+# from test_suite import Tester
 
 class SimpleUI:
     def __init__(self, root: tk.Tk):
@@ -35,12 +36,26 @@ class SimpleUI:
         self.model_upload_btn.pack(side='right', padx=25)
         
         # Checkboxes
-        self.check_var1 = tk.IntVar()
-        self.check_var2 = tk.IntVar()
-        self.checkbox1 = tk.Checkbutton(root, text='Option 1', variable=self.check_var1)
-        self.checkbox2 = tk.Checkbutton(root, text='Option 2', variable=self.check_var2)
-        self.checkbox1.pack(pady=5)
-        self.checkbox2.pack(pady=5)
+        default_models_frame=Frame(root, width=400, height=200)
+        default_models_frame.pack()
+
+        self.resnet_simple = tk.IntVar()
+        self.resnet_34 = tk.IntVar()
+        self.resnet_50 = tk.IntVar()
+        self.efficient_net = tk.IntVar()
+        self.mobile_net = tk.IntVar()
+
+        self.resent_simple_btn = tk.Checkbutton(default_models_frame, text='Resnet (Simple)', variable=self.resnet_simple)
+        self.resnet_34_btn = tk.Checkbutton(default_models_frame, text='Resnet 34', variable=self.resnet_34)
+        self.resnet_50_btn = tk.Checkbutton(default_models_frame, text='Resnet 50', variable=self.resnet_50)
+        self.efficient_net_btn = tk.Checkbutton(default_models_frame, text='EfficientNet', variable=self.efficient_net)
+        self.mobile_net_btn = tk.Checkbutton(default_models_frame, text='MobileNet', variable=self.mobile_net)
+
+        self.resent_simple_btn.grid(row=0, column=0)
+        self.resnet_34_btn.grid(row=0, column=1)
+        self.resnet_50_btn.grid(row=0, column=2)
+        self.efficient_net_btn.grid(row=1, column=0)
+        self.mobile_net_btn.grid(row=1, column=1)
         
         # Text input field
         shape_frame=Frame(root, width=400, height=200)
@@ -76,11 +91,17 @@ class SimpleUI:
             messagebox.showinfo('Selected File', self.base_csv_path)
 
     def submit(self):
-        selected_options = []
-        if self.check_var1.get():
-            selected_options.append('Option 1')
-        if self.check_var2.get():
-            selected_options.append('Option 2')
+        selected_models = []
+        if self.resnet_simple.get():
+            selected_models.append('resnet_simple')
+        if self.resnet_34.get():
+            selected_models.append('resnet_34')
+        if self.resnet_50.get():
+            selected_models.append('resnet_50')
+        if self.efficient_net.get():
+            selected_models.append('efficient_net')
+        if self.mobile_net.get():
+            selected_models.append('mobile_net')
         
         shape_input = self.shape_input.get()
         if shape_input:
@@ -92,7 +113,7 @@ class SimpleUI:
 
         number_input = self.number_entry.get()
         
-        result = f'Selected Options: {", ".join(selected_options)}\n'
+        result = f'Selected Options: {", ".join(selected_models)}\n'
         result += f'Parsed Input Shape: {input_shape}\n'
         result += f'Number Input: {number_input}'
         
