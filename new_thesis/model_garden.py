@@ -13,7 +13,7 @@ class ModelGarden:
 		self.num_classes = num_classes
 		self.model_generators = [*self.parse_model_list(model_list), *self.parse_custom_model_list(custom_model_list)]
 
-	def parse_model_list(self, model_list: list[str]) -> list[function[[], ModelInterface]]:
+	def parse_model_list(self, model_list: list[str]) -> list:
 		models = []
 		for model_identifier in model_list:
 			if model_identifier == 'resnet_50': models.append(self.resnet_50)
@@ -26,7 +26,7 @@ class ModelGarden:
 		return models
 	
 	# wrap each custom model in a function so we can call it like the others
-	def parse_custom_model_list(self, custom_model_list: list[ModelInterface]) -> list[function[[], ModelInterface]]:
+	def parse_custom_model_list(self, custom_model_list: list[ModelInterface]) -> list:
 		custom_models = []
 		for model in custom_model_list:
 			custom_models.append(lambda: model)
