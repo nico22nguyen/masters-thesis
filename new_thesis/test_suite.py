@@ -1,4 +1,5 @@
-from model_garden import ModelGarden, ModelInterface
+from model_garden import ModelGarden
+from model_interfaces import ModelInterface, TensorFlowModel, TorchModel
 
 import gc
 import numpy as np
@@ -7,7 +8,7 @@ import tensorflow as tf
 from keras.utils import to_categorical
 
 class Tester:
-	def __init__(self, base_csv: str, shape: tuple[int, ...], epochs=100, learning_rate=4e-4, batch_size=256) -> None:
+	def __init__(self, base_csv: str, shape: tuple[int, ...], custom_model_paths=[], epochs=100, learning_rate=4e-4, batch_size=256) -> None:
 		'''Expects csv to be in the following format:
 			1. One row per sample in dataset
 			2. First column specifies class (integer value)
@@ -26,7 +27,9 @@ class Tester:
 		# define models used for evaluation
 		model_garden = ModelGarden(shape, self.num_classes)
 
+		custom_models = self.parse_custom_model_paths(custom_model_paths)
 		self.model_generators = [
+			*custom_models,
 			model_garden.mobile_net,
 			model_garden.efficient_net,
 			model_garden.resnet_34,
@@ -77,6 +80,20 @@ class Tester:
 		x = x.reshape(new_shape) 
 		
 		return x, y
+	
+	def parse_custom_model_paths(self, custom_model_paths: list[str]) -> list[ModelInterface]:
+		custom_models = []
+		for path in custom_model_paths:
+			file_extension = path.split('.')[-1]
+			if file_extension == '.keras':
+				custom_model = TensorFlowModel.load_model(path)
+			elif file_extension == '.pt':
+				custom_model = TorchModel.load_model(path)
+			else:
+				raise ValueError(f'Unexpected file extension: {file_extension}')
+			
+			custom_models.append(custom_model)
+		return custom_models
 
 if __name__ == '__main__':
 	print('Testing load_base_csv() on cifar csv:\n')
