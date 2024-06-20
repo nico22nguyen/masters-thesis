@@ -7,7 +7,7 @@ import pandas as pd
 from keras.utils import to_categorical
 
 class Tester:
-	def __init__(self, base_csv: str, shape: tuple[int, ...], custom_model_paths=[], epochs=100, learning_rate=4e-4, batch_size=256) -> None:
+	def __init__(self, base_csv: str, shape: tuple[int, ...], custom_model_paths=[], default_models=[], epochs=100, learning_rate=4e-4, batch_size=256) -> None:
 		'''Expects csv to be in the following format:
 			1. One row per sample in dataset
 			2. First column specifies class (integer value)
@@ -24,17 +24,8 @@ class Tester:
 		self.batch_size = batch_size
 
 		# define models used for evaluation
-		model_garden = ModelGarden(shape, self.num_classes)
-
 		custom_models = self.parse_custom_model_paths(custom_model_paths)
-		self.model_generators = [
-			*custom_models,
-			model_garden.mobile_net,
-			model_garden.efficient_net,
-			model_garden.resnet_34,
-			model_garden.sequential,
-			model_garden.resnet_50
-		]
+		self.model_garden = ModelGarden(shape, self.num_classes, default_models, custom_models)
 
 	def evaluate_reductions(self, reduced_csvs: list[str], validation: tuple[np.ndarray, np.ndarray]) -> list[float]:
 		'''Each csv in `reduced_csvs` should be a newline separated list of integers.
@@ -48,7 +39,7 @@ class Tester:
 			reduced_x, reduced_y = self.reduce_dataset(indices)
 
 			acclist = []
-			for i, model_generator in enumerate(self.model_generators):
+			for i, model_generator in enumerate(self.model_garden.model_generators):
 				# train model and record training/validation accuracy
 				model: ModelInterface = model_generator()
 				

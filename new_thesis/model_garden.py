@@ -8,9 +8,29 @@ from resnet import ResNet34
 from model_interfaces import ModelInterface, TensorFlowModel, TorchModel
 
 class ModelGarden:
-	def __init__(self, input_shape: tuple[int, ...], num_classes: int) -> None:
+	def __init__(self, input_shape: tuple[int, ...], num_classes: int, model_list: list[str] = [], custom_model_list: list[ModelInterface] = []) -> None:
 		self.input_shape = input_shape
 		self.num_classes = num_classes
+		self.model_generators = [*self.parse_model_list(model_list), *self.parse_custom_model_list(custom_model_list)]
+
+	def parse_model_list(self, model_list: list[str]) -> list[function[[], ModelInterface]]:
+		models = []
+		for model_identifier in model_list:
+			if model_identifier == 'resnet_50': models.append(self.resnet_50)
+			elif model_identifier == 'resnet_simple': models.append(self.sequential)
+			elif model_identifier == 'resnet_34': models.append(self.resnet_34)
+			elif model_identifier == 'efficient_net': models.append(self.efficient_net)
+			elif model_identifier == 'mobile_net': models.append(self.mobile_net)
+			else:
+				raise ValueError(f'Unsupported model type: {model_identifier}')
+		return models
+	
+	# wrap each custom model in a function so we can call it like the others
+	def parse_custom_model_list(self, custom_model_list: list[ModelInterface]) -> list[function[[], ModelInterface]]:
+		custom_models = []
+		for model in custom_model_list:
+			custom_models.append(lambda: model)
+		return custom_models
 	
 	def resnet_50(self) -> ModelInterface:
 		model = ResNet50(weights=None, input_shape=self.input_shape, pooling='max', classes=self.num_classes, classifier_activation='softmax')
