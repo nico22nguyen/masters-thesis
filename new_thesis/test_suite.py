@@ -1,5 +1,5 @@
-from model_garden import ModelGarden
 from model_interfaces import ModelInterface, TensorFlowModel, TorchModel
+from model_garden import ModelGarden
 
 import gc
 import numpy as np
