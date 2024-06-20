@@ -4,7 +4,6 @@ from model_interfaces import ModelInterface, TensorFlowModel, TorchModel
 import gc
 import numpy as np
 import pandas as pd
-import tensorflow as tf
 from keras.utils import to_categorical
 
 class Tester:
