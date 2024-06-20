@@ -6,7 +6,7 @@ class SimpleUI:
     def __init__(self, root: tk.Tk):
         self.base_csv_path = None
         self.reduction_csv_paths = None
-        self.custom_model_paths = []
+        self.custom_model_paths = None
     
         root.title('Dataset Reduction Test Suite')
 
