@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import filedialog, messagebox, Frame
-# from test_suite import Tester
+from test_suite import Tester
 
 class SimpleUI:
     def __init__(self, root: tk.Tk):
@@ -139,6 +139,9 @@ class SimpleUI:
 
         number_input = self.number_entry.get()
         
+        print('initializing test suite...')
+        test_suite = Tester(self.base_csv_path, input_shape, self.custom_model_paths, selected_models)
+        print('success')
         result = f'Selected Options: {", ".join(selected_models)}\n'
         result += f'Parsed Input Shape: {input_shape}\n'
         result += f'Number Input: {number_input}'
