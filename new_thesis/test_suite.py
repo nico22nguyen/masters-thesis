@@ -24,7 +24,7 @@ class Tester:
 		self.batch_size = batch_size
 
 		# define models used for evaluation
-		custom_models = self.parse_custom_model_paths(custom_model_paths)
+		custom_models = self.parse_custom_model_paths(custom_model_paths) if custom_model_paths else []
 		self.model_garden = ModelGarden(shape, self.num_classes, default_models, custom_models)
 
 	def evaluate_reductions(self, reduced_csvs: list[str], validation: tuple[np.ndarray, np.ndarray]) -> list[float]:
