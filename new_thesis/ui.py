@@ -113,20 +113,17 @@ class SimpleUI:
             return
         
         # ensure input shape is correctly formatted
-        if shape_input:
-            input_clean = shape_input.replace(' ', '').replace('(', '').replace(')', '')
-            dim_list = input_clean.split(',')
-            dim_list_int = []
-            for dim in dim_list:
-                if len(dim) == 0: continue
-                if not dim.isdecimal():
-                    messagebox.showinfo('Bad Format', f'Incorrect format for Input Shape. Problem near: "{dim}"')
-                    return
-                dim_list_int.append(int(dim))
+        input_clean = shape_input.replace(' ', '').replace('(', '').replace(')', '')
+        dim_list = input_clean.split(',')
+        dim_list_int = []
+        for dim in dim_list:
+            if len(dim) == 0: continue
+            if not dim.isdecimal():
+                messagebox.showinfo('Bad Format', f'Incorrect format for Input Shape. Problem near: "{dim}"')
+                return
+            dim_list_int.append(int(dim))
 
-            input_shape = tuple(dim_list_int)
-        else:
-            input_shape = None
+        input_shape = tuple(dim_list_int)
 
         selected_models = []
         if self.resnet_simple.get():
