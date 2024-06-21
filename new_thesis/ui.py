@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import filedialog, messagebox, Frame
 from test_suite import Tester
+from model_garden import MODEL
 
 class SimpleUI:
     def __init__(self, root: tk.Tk):
@@ -127,23 +128,22 @@ class SimpleUI:
 
         selected_models = []
         if self.resnet_simple.get():
-            selected_models.append('resnet_simple')
+            selected_models.append(MODEL.RESNET_SIMPLE)
         if self.resnet_34.get():
-            selected_models.append('resnet_34')
+            selected_models.append(MODEL.RESNET_34)
         if self.resnet_50.get():
-            selected_models.append('resnet_50')
+            selected_models.append(MODEL.RESNET_50)
         if self.efficient_net.get():
-            selected_models.append('efficient_net')
+            selected_models.append(MODEL.EFFICIENT_NET)
         if self.mobile_net.get():
-            selected_models.append('mobile_net')
+            selected_models.append(MODEL.MOBILE_NET)
 
         number_input = self.number_entry.get()
         
         print('initializing test suite...')
         test_suite = Tester(self.base_csv_path, input_shape, self.custom_model_paths, selected_models)
         print('success')
-        result = f'Selected Options: {", ".join(selected_models)}\n'
-        result += f'Parsed Input Shape: {input_shape}\n'
+        result = f'Parsed Input Shape: {input_shape}\n'
         result += f'Number Input: {number_input}'
         
         messagebox.showinfo('Submitted Data', result)

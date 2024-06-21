@@ -1,3 +1,4 @@
+from enum import Enum
 from keras.applications import ResNet50
 from keras.layers import Dense, Conv2D, Flatten, MaxPooling2D, Dropout
 from keras.losses import CategoricalCrossentropy
@@ -6,6 +7,13 @@ from torchvision.models import efficientnet_b0, mobilenet_v2
 
 from resnet import ResNet34
 from model_interfaces import ModelInterface, TensorFlowModel, TorchModel
+
+class MODEL(Enum):
+	RESNET_34 = 'resnet_34'
+	RESNET_50 = 'resnet_50'
+	RESNET_SIMPLE = 'resnet_simple'
+	EFFICIENT_NET = 'efficient_net'
+	MOBILE_NET = 'mobile_net'
 
 class ModelGarden:
 	def __init__(self, input_shape: tuple[int, ...], num_classes: int, model_list: list[str] = [], custom_model_list: list[ModelInterface] = []) -> None:
@@ -16,11 +24,11 @@ class ModelGarden:
 	def parse_model_list(self, model_list: list[str]) -> list:
 		models = []
 		for model_identifier in model_list:
-			if model_identifier == 'resnet_50': models.append(self.resnet_50)
-			elif model_identifier == 'resnet_simple': models.append(self.sequential)
-			elif model_identifier == 'resnet_34': models.append(self.resnet_34)
-			elif model_identifier == 'efficient_net': models.append(self.efficient_net)
-			elif model_identifier == 'mobile_net': models.append(self.mobile_net)
+			if model_identifier == MODEL.RESNET_50: models.append(self.resnet_50)
+			elif model_identifier == MODEL.RESNET_SIMPLE: models.append(self.sequential)
+			elif model_identifier == MODEL.RESNET_34: models.append(self.resnet_34)
+			elif model_identifier == MODEL.EFFICIENT_NET: models.append(self.efficient_net)
+			elif model_identifier == MODEL.MOBILE_NET: models.append(self.mobile_net)
 			else:
 				raise ValueError(f'Unsupported model type: {model_identifier}')
 		return models
