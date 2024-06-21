@@ -75,9 +75,9 @@ class Tester:
 		custom_models = []
 		for path in custom_model_paths:
 			file_extension = path.split('.')[-1]
-			if file_extension == '.keras':
+			if file_extension == 'keras':
 				custom_model = TensorFlowModel.load_model(path)
-			elif file_extension == '.pt':
+			elif file_extension == 'pt':
 				custom_model = TorchModel.load_model(path)
 			else:
 				raise ValueError(f'Unexpected file extension: {file_extension}')
