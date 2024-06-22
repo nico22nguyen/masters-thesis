@@ -106,12 +106,6 @@ class SimpleUI:
         self.shape_label.pack(side='left', padx=25)
         self.shape_input.pack(side='right', padx=25)
         
-        # Number input field
-        self.number_label = tk.Label(root, text='Number Input:')
-        self.number_label.pack(pady=5)
-        self.number_entry = tk.Spinbox(root, from_=0, to=100)
-        self.number_entry.pack(pady=5)
-        
         # Submit button
         self.submit_btn = tk.Button(root, text='Submit', command=self.submit)
         self.submit_btn.pack(pady=10)
@@ -222,14 +216,11 @@ class SimpleUI:
             selected_models.append(MODEL.EFFICIENT_NET)
         if self.mobile_net.get():
             selected_models.append(MODEL.MOBILE_NET)
-
-        number_input = self.number_entry.get()
         
         print('initializing test suite...')
         test_suite = Tester(self.base_csv_path, input_shape, self.custom_model_paths, selected_models)
         print('success')
-        result = f'Parsed Input Shape: {input_shape}\n'
-        result += f'Number Input: {number_input}'
+        result = f'Parsed Input Shape: {input_shape}'
         
         messagebox.showinfo('Submitted Data', result)
 
