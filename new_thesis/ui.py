@@ -39,7 +39,12 @@ class SimpleUI:
         self.model_upload_btn.pack(side='right', padx=25)
         
         # Checkboxes
-        default_models_frame=Frame(root, width=400, height=200)
+        default_models_label_frame=Frame(root)
+        default_models_label_frame.pack(fill='x')
+        self.default_models_label = tk.Label(default_models_label_frame, text='Default Models:')
+        self.default_models_label.pack(side='left', padx=25, pady=(10, 0))
+
+        default_models_frame=Frame(root)
         default_models_frame.pack()
 
         self.resnet_simple = tk.IntVar()
