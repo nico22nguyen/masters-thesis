@@ -4,6 +4,7 @@ from test_suite import Tester
 from model_garden import MODEL
 
 VERTICAL_SPACING = 20
+TAG_SPACING = 2
 
 class SimpleUI:
     def __init__(self, root: tk.Tk):
@@ -25,8 +26,8 @@ class SimpleUI:
         self.base_required_text = tk.StringVar(value='[required]')
         self.base_required_value = tk.Label(base_csv_frame, textvariable=self.base_required_text, fg='red')
 
-        self.base_upload_label.pack(side='left', padx=(25, 5))
-        self.base_upload_btn.pack(side='right', padx=(5, 25))
+        self.base_upload_label.pack(side='left', padx=(25, TAG_SPACING))
+        self.base_upload_btn.pack(side='right', padx=(TAG_SPACING, 25))
         self.base_required_value.pack(side='left')
         
         self.base_display_frame=Frame(root)
@@ -44,8 +45,8 @@ class SimpleUI:
         self.reduction_required_text = tk.StringVar(value='[required]')
         self.reduction_required_tag = tk.Label(reduction_csv_frame, textvariable=self.reduction_required_text, fg='red')
 
-        self.reduction_upload_label.pack(side='left', padx=(25, 5))
-        self.reduction_upload_btn.pack(side='right', padx=(5, 25))
+        self.reduction_upload_label.pack(side='left', padx=(25, TAG_SPACING))
+        self.reduction_upload_btn.pack(side='right', padx=(TAG_SPACING, 25))
         self.reduction_required_tag.pack(side='left') 
 
         self.reduction_list_frame=Frame(root)
@@ -60,8 +61,8 @@ class SimpleUI:
         self.custom_optional_tag = tk.Label(custom_models_frame, textvariable=self.custom_optional_text)
         self.model_upload_btn = tk.Button(custom_models_frame, text='Upload File(s)', command=self.upload_custom_models)
 
-        self.model_upload_label.pack(side='left', padx=(25, 5))
-        self.model_upload_btn.pack(side='right', padx=(5, 25))
+        self.model_upload_label.pack(side='left', padx=(25, TAG_SPACING))
+        self.model_upload_btn.pack(side='right', padx=(TAG_SPACING, 25))
         self.custom_optional_tag.pack(side='left') 
 
         self.custom_list_frame=Frame(root)
