@@ -4,6 +4,8 @@ from test_suite import Tester
 from model_garden import MODEL
 
 VERTICAL_SPACING = 20
+LEFT_MARGIN = 25
+RIGHT_MARGIN = 25
 TAG_SPACING = 2
 
 class SimpleUI:
@@ -26,8 +28,8 @@ class SimpleUI:
         self.base_required_text = tk.StringVar(value='[required]')
         self.base_required_value = tk.Label(base_csv_frame, textvariable=self.base_required_text, fg='red')
 
-        self.base_upload_label.pack(side='left', padx=(25, TAG_SPACING))
-        self.base_upload_btn.pack(side='right', padx=(TAG_SPACING, 25))
+        self.base_upload_label.pack(side='left', padx=(LEFT_MARGIN, TAG_SPACING))
+        self.base_upload_btn.pack(side='right', padx=(TAG_SPACING, RIGHT_MARGIN))
         self.base_required_value.pack(side='left')
         
         self.base_display_frame=Frame(root)
@@ -45,8 +47,8 @@ class SimpleUI:
         self.reduction_required_text = tk.StringVar(value='[required]')
         self.reduction_required_tag = tk.Label(reduction_csv_frame, textvariable=self.reduction_required_text, fg='red')
 
-        self.reduction_upload_label.pack(side='left', padx=(25, TAG_SPACING))
-        self.reduction_upload_btn.pack(side='right', padx=(TAG_SPACING, 25))
+        self.reduction_upload_label.pack(side='left', padx=(LEFT_MARGIN, TAG_SPACING))
+        self.reduction_upload_btn.pack(side='right', padx=(TAG_SPACING, RIGHT_MARGIN))
         self.reduction_required_tag.pack(side='left') 
 
         self.reduction_list_frame=Frame(root)
@@ -62,7 +64,7 @@ class SimpleUI:
         self.model_upload_btn = tk.Button(custom_models_frame, text='Upload File(s)', command=self.upload_custom_models)
 
         self.model_upload_label.pack(side='left', padx=(25, TAG_SPACING))
-        self.model_upload_btn.pack(side='right', padx=(TAG_SPACING, 25))
+        self.model_upload_btn.pack(side='right', padx=(TAG_SPACING, RIGHT_MARGIN))
         self.custom_optional_tag.pack(side='left') 
 
         self.custom_list_frame=Frame(root)
@@ -72,7 +74,7 @@ class SimpleUI:
         default_models_label_frame=Frame(root)
         default_models_label_frame.pack(fill='x')
         self.default_models_label = tk.Label(default_models_label_frame, text='Default Models:')
-        self.default_models_label.pack(side='left', padx=25, pady=(VERTICAL_SPACING, 0))
+        self.default_models_label.pack(side='left', padx=LEFT_MARGIN, pady=(VERTICAL_SPACING, 0))
 
         default_models_frame=Frame(root)
         default_models_frame.pack()
@@ -106,8 +108,8 @@ class SimpleUI:
         shape_frame.pack(fill='x', pady=VERTICAL_SPACING)
         self.shape_label = tk.Label(shape_frame, text='Input Shape (comma separated, no batch dim):')
         self.shape_input = tk.Entry(shape_frame)
-        self.shape_label.pack(side='left', padx=25)
-        self.shape_input.pack(side='right', padx=25)
+        self.shape_label.pack(side='left', padx=LEFT_MARGIN)
+        self.shape_input.pack(side='right', padx=RIGHT_MARGIN)
         
         # Submit button
         self.submit_btn = tk.Button(root, text='Submit', command=self.submit)
