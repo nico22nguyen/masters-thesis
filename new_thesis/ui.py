@@ -118,8 +118,7 @@ class SimpleUI:
             # validate paths
             for path in new_paths:
                 if path.split('.')[-1] != 'csv':
-                    self.reduction_required_tag.pack(side='left')
-                    self.reduction_required_text.set('Previous upload failed: All files must be .csv.')
+                    messagebox.showerror('Upload Failed', f'All files must be .csv.\nBad file was: {path}')
                     return
             
             for label in self.reduction_list_frame.winfo_children():
@@ -143,9 +142,7 @@ class SimpleUI:
                 new_paths = list(set(new_paths))
                 file_extension = path.split('.')[-1]
                 if file_extension != 'keras' and file_extension != 'pt':
-                    self.custom_optional_tag.pack(side='left')
-                    self.custom_optional_tag.config(fg='red')
-                    self.custom_optional_text.set('Previous upload failed: All files must be .keras or .pt.')
+                    messagebox.showerror('Upload Failed', f'All files must be .keras or .pt.\nBad file was: {path}')
                     return
 
             for label in self.custom_list_frame.winfo_children():
@@ -166,8 +163,7 @@ class SimpleUI:
         new_path = filedialog.askopenfilename(title='Select File')
         if new_path:
             if new_path.split('.')[-1] != 'csv':
-                self.base_required_text.set('Previous upload failed: File must be .csv.')
-                self.base_required_value.pack(side='left')
+                messagebox.showerror('Upload Failed', f'Previous upload failed: File must be .csv.\nUploaded file was: {new_path}')
                 return
 
             self.base_required_value.pack_forget()
