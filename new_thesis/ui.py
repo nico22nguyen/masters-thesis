@@ -15,28 +15,55 @@ class SimpleUI:
         root.geometry('600x600')
         
         # Base csv upload button
-        base_csv_frame=Frame(root, width=400, height=200)
-        base_csv_frame.pack(fill='x', pady=10)
+        base_csv_frame=Frame(root)
+        base_csv_frame.pack(fill='x', pady=(10, 0))
+
         self.base_upload_label = tk.Label(base_csv_frame, text='Base dataset (.csv):')
         self.base_upload_btn = tk.Button(base_csv_frame, text='Upload File', command=self.upload_base)
-        self.base_upload_label.pack(side='left', padx=25)
-        self.base_upload_btn.pack(side='right', padx=25)
+        self.base_required_text = tk.StringVar(value='[required]')
+        self.base_required_value = tk.Label(base_csv_frame, textvariable=self.base_required_text, fg='red')
+
+        self.base_upload_label.pack(side='left', padx=(25, 5))
+        self.base_upload_btn.pack(side='right', padx=(5, 25))
+        self.base_required_value.pack(side='left')
+        
+        self.base_display_frame=Frame(root)
+        self.base_display_frame.pack(fill='x')
+
+        self.base_display_var = tk.StringVar()
+        self.base_display_label = tk.Label(self.base_display_frame, textvariable=self.base_display_var) # dont pack until user uploads a csv
 
         # Index csv upload button
-        reduction_csv_frame=Frame(root, width=400, height=200)
-        reduction_csv_frame.pack(fill='x', pady=10)
+        reduction_csv_frame=Frame(root)
+        reduction_csv_frame.pack(fill='x', pady=(10, 0))
+
         self.reduction_upload_label = tk.Label(reduction_csv_frame, text='Reduction indices (.csv):')
         self.reduction_upload_btn = tk.Button(reduction_csv_frame, text='Upload File(s)', command=self.upload_reductions)
-        self.reduction_upload_label.pack(side='left', padx=25)
-        self.reduction_upload_btn.pack(side='right', padx=25)
+        self.reduction_required_text = tk.StringVar(value='[required]')
+        self.reduction_required_tag = tk.Label(reduction_csv_frame, textvariable=self.reduction_required_text, fg='red')
+
+        self.reduction_upload_label.pack(side='left', padx=(25, 5))
+        self.reduction_upload_btn.pack(side='right', padx=(5, 25))
+        self.reduction_required_tag.pack(side='left') 
+
+        self.reduction_list_frame=Frame(root)
+        self.reduction_list_frame.pack(fill='x')
         
         # Custom models upload button
-        custom_models_frame=Frame(root, width=400, height=200)
-        custom_models_frame.pack(fill='x', pady=10)
-        self.model_upload_label = tk.Label(custom_models_frame, text='Custom Models (.keras) [Optional]:')
+        custom_models_frame=Frame(root)
+        custom_models_frame.pack(fill='x', pady=(10, 0))
+
+        self.model_upload_label = tk.Label(custom_models_frame, text='Custom Models (.keras, .pt):')
+        self.custom_optional_text = tk.StringVar(value='[optional]')
+        self.custom_optional_tag = tk.Label(custom_models_frame, textvariable=self.custom_optional_text)
         self.model_upload_btn = tk.Button(custom_models_frame, text='Upload File(s)', command=self.upload_custom_models)
-        self.model_upload_label.pack(side='left', padx=25)
-        self.model_upload_btn.pack(side='right', padx=25)
+
+        self.model_upload_label.pack(side='left', padx=(25, 5))
+        self.model_upload_btn.pack(side='right', padx=(5, 25))
+        self.custom_optional_tag.pack(side='left') 
+
+        self.custom_list_frame=Frame(root)
+        self.custom_list_frame.pack(fill='x')
         
         # Checkboxes
         default_models_label_frame=Frame(root)
@@ -72,7 +99,7 @@ class SimpleUI:
         self.mobile_net.set(True)
         
         # Text input field
-        shape_frame=Frame(root, width=400, height=200)
+        shape_frame=Frame(root)
         shape_frame.pack(fill='x', pady=10)
         self.shape_label = tk.Label(shape_frame, text='Input Shape (comma separated, no batch dim):')
         self.shape_input = tk.Entry(shape_frame)
@@ -90,19 +117,72 @@ class SimpleUI:
         self.submit_btn.pack(pady=10)
 
     def upload_reductions(self):
-        self.reduction_csv_paths = filedialog.askopenfilenames(title='Select Files')
-        if self.reduction_csv_paths:
-            messagebox.showinfo('Selected Files', '\n'.join(self.reduction_csv_paths))
+        new_paths = filedialog.askopenfilenames(title='Select Files')
+        if new_paths:
+            # validate paths
+            for path in new_paths:
+                if path.split('.')[-1] != 'csv':
+                    self.reduction_required_tag.pack(side='left')
+                    self.reduction_required_text.set('Previous upload failed: All files must be .csv.')
+                    return
+            
+            for label in self.reduction_list_frame.winfo_children():
+                label.destroy()
+            labels = [tk.Label(self.reduction_list_frame, text=f'- {path}') for path in new_paths]
+            for label in labels: label.pack(side='top', padx=(50, 0), anchor='w')
+            self.reduction_required_tag.pack_forget()
+        else:
+            self.reduction_required_text.set('[required]')
+            self.reduction_required_tag.pack(side='left')
+            for label in self.reduction_list_frame.winfo_children():
+                label.destroy()
+        
+        self.reduction_csv_paths = new_paths
 
     def upload_custom_models(self):
-        self.custom_model_paths = filedialog.askopenfilenames(title='Select Files')
-        if self.custom_model_paths:
-            messagebox.showinfo('Selected Files', '\n'.join(self.custom_model_paths))
+        new_paths = filedialog.askopenfilenames(title='Select Files')
+        if new_paths:
+            # validate paths
+            for path in new_paths:
+                new_paths = list(set(new_paths))
+                file_extension = path.split('.')[-1]
+                if file_extension != 'keras' and file_extension != 'pt':
+                    self.custom_optional_tag.pack(side='left')
+                    self.custom_optional_tag.config(fg='red')
+                    self.custom_optional_text.set('Previous upload failed: All files must be .keras or .pt.')
+                    return
+
+            for label in self.reduction_list_frame.winfo_children():
+                label.destroy()
+            labels = [tk.Label(self.custom_list_frame, text=f'- {path}') for path in new_paths]
+            for label in labels: label.pack(side='top', padx=(50, 0), anchor='w')
+            self.custom_optional_tag.pack_forget()
+        else:
+            self.custom_optional_text.set('[optional]')
+            self.custom_optional_tag.config(fg='black')
+            self.custom_optional_tag.pack(side='left')
+            for label in self.custom_list_frame.winfo_children():
+                label.destroy()
+        
+        self.custom_model_paths = new_paths
 
     def upload_base(self):
-        self.base_csv_path = filedialog.askopenfilename(title='Select File')
-        if self.base_csv_path:
-            messagebox.showinfo('Selected File', self.base_csv_path)
+        new_path = filedialog.askopenfilename(title='Select File')
+        if new_path:
+            if new_path.split('.')[-1] != 'csv':
+                self.base_required_text.set('Previous upload failed: File must be .csv.')
+                self.base_required_value.pack(side='left')
+                return
+
+            self.base_required_value.pack_forget()
+            self.base_display_var.set(f'- {new_path}')
+            self.base_display_label.pack(side='top', padx=(50, 0), anchor='w')
+        else:
+            self.base_display_label.pack_forget()
+            self.base_required_text.set('[required]')
+            self.base_required_value.pack(side='left')
+
+        self.base_csv_path = new_path
 
     def submit(self):
         shape_input = self.shape_input.get()
