@@ -152,7 +152,7 @@ class SimpleUI:
                     self.custom_optional_text.set('Previous upload failed: All files must be .keras or .pt.')
                     return
 
-            for label in self.reduction_list_frame.winfo_children():
+            for label in self.custom_list_frame.winfo_children():
                 label.destroy()
             labels = [tk.Label(self.custom_list_frame, text=f'- {path}') for path in new_paths]
             for label in labels: label.pack(side='top', padx=(50, 0), anchor='w')
