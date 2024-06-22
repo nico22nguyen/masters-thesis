@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import filedialog, messagebox, Frame
 from test_suite import Tester
 from model_garden import MODEL
+from progress import ProgressPage
 
 VERTICAL_SPACING = 20
 LEFT_MARGIN = 25
@@ -14,6 +15,7 @@ class SimpleUI:
         self.reduction_csv_paths = None
         self.custom_model_paths = None
     
+        self.root = root
         root.title('Dataset Reduction Test Suite')
 
         # Set default window size
@@ -212,11 +214,9 @@ class SimpleUI:
             selected_models.append(MODEL.MOBILE_NET)
         
         print('initializing test suite...')
-        test_suite = Tester(self.base_csv_path, input_shape, self.custom_model_paths, selected_models)
+        test_suite = Tester(self.base_csv_path, input_shape, self.custom_model_paths, selected_models, epochs=10)
+        self.progress_window = ProgressPage(self.root, test_suite, self.reduction_csv_paths)
         print('success')
-        result = f'Parsed Input Shape: {input_shape}'
-        
-        messagebox.showinfo('Submitted Data', result)
 
 if __name__ == '__main__':
     root = tk.Tk()

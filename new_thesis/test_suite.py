@@ -57,6 +57,41 @@ class Tester:
 	
 			accuracies.append(np.array(acclist).mean())
 		
+	def evaluate_reductions_live(self, reduced_csvs: list[str], validation: tuple[np.ndarray, np.ndarray]):
+		'''Each csv in `reduced_csvs` should be a newline separated list of integers.
+			- It is assumed that size(indices) <= size(base)
+		'''
+		
+		accuracies = []
+		for index_csv_path in reduced_csvs:
+			print(f'evaluating: {index_csv_path.split("/")[-1]}...')
+			indices = pd.read_csv(index_csv_path, header=None).to_numpy().squeeze()
+			reduced_x, reduced_y = self.reduce_dataset(indices)
+
+			acclist = []
+			for i, model_generator in enumerate(self.model_garden.model_generators):
+				print(f'model generator: {i}')
+				# train model and record training/validation accuracy
+				model: ModelInterface = model_generator()
+				
+				acc, valacc = model.get_accuracies(reduced_x, reduced_y, epochs=self.epochs, batch_size=self.batch_size, validation_data=validation)
+				# del model
+				# acc = history.history['categorical_accuracy'][-1]
+				# valacc = history.history['val_categorical_accuracy'][-1]
+				print(f"  MODEL {i + 1}: train acc = {acc:.5f} val acc = {valacc:.5f}")
+
+				acclist.append(valacc)
+				yield valacc
+				print('yielded valacc')
+
+				# clean up, important for conserving VRAM
+				# del history
+				gc.collect()
+	
+			accuracies.append(np.array(acclist).mean())
+
+		yield accuracies
+		
 	def reduce_dataset(self, indices: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
 		# reduce base by indices
 		reduced_base = self.base.iloc[indices]
@@ -86,9 +121,10 @@ class Tester:
 		return custom_models
 
 if __name__ == '__main__':
+	from model_garden import MODEL
 	print('Testing load_base_csv() on cifar csv:\n')
 	print('Loading csv...')
-	tester = Tester('datasets/cifar_base.csv', (32, 32, 3))
+	tester = Tester('datasets/cifar_base.csv', (32, 32, 3), default_models=[MODEL.RESNET_34, MODEL.RESNET_34])
 	val_x, val_y = tester.reduce_dataset(np.random.randint(0, tester.base.shape[0], 1000))
 	accuracies = tester.evaluate_reductions(['datasets/cifar_indices_1.csv', 'datasets/cifar_indices_2.csv', 'datasets/cifar_indices_3.csv'], (val_x, val_y))
 	print(accuracies)
