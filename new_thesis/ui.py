@@ -183,7 +183,7 @@ class SimpleUI:
         }
         missing = [key for key in required if not required[key]]
         if len(missing) > 0:
-            messagebox.showinfo('Missing Fields', f'Missing required fields: {", ".join(missing)}')
+            messagebox.showerror('Missing Fields', f'Missing required fields: {", ".join(missing)}')
             return
         
         # ensure input shape is correctly formatted
@@ -193,7 +193,7 @@ class SimpleUI:
         for dim in dim_list:
             if len(dim) == 0: continue
             if not dim.isdecimal():
-                messagebox.showinfo('Bad Format', f'Incorrect format for Input Shape. Problem near: "{dim}"')
+                messagebox.showerror('Bad Format', f'Incorrect format for Input Shape. Problem near: "{dim}"')
                 return
             dim_list_int.append(int(dim))
 
