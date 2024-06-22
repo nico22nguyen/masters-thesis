@@ -26,11 +26,11 @@ class SimpleUI:
         self.base_upload_label = tk.Label(base_csv_frame, text='Base dataset (.csv):')
         self.base_upload_btn = tk.Button(base_csv_frame, text='Upload File', command=self.upload_base)
         self.base_required_text = tk.StringVar(value='[required]')
-        self.base_required_value = tk.Label(base_csv_frame, textvariable=self.base_required_text, fg='red')
+        self.base_required_tag = tk.Label(base_csv_frame, textvariable=self.base_required_text, fg='red')
 
         self.base_upload_label.pack(side='left', padx=(LEFT_MARGIN, TAG_SPACING))
         self.base_upload_btn.pack(side='right', padx=(TAG_SPACING, RIGHT_MARGIN))
-        self.base_required_value.pack(side='left')
+        self.base_required_tag.pack(side='left')
         
         self.base_display_frame=Frame(root)
         self.base_display_frame.pack(fill='x')
@@ -169,13 +169,13 @@ class SimpleUI:
                 messagebox.showerror('Upload Failed', f'Previous upload failed: File must be .csv.\nUploaded file was: {new_path}')
                 return
 
-            self.base_required_value.pack_forget()
+            self.base_required_tag.pack_forget()
             self.base_display_var.set(f'- {new_path}')
             self.base_display_label.pack(side='top', padx=(50, 0), anchor='w')
         else:
             self.base_display_label.pack_forget()
             self.base_required_text.set('[required]')
-            self.base_required_value.pack(side='left')
+            self.base_required_tag.pack(side='left')
 
         self.base_csv_path = new_path
 
