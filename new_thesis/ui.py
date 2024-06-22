@@ -25,8 +25,7 @@ class SimpleUI:
 
         self.base_upload_label = tk.Label(base_csv_frame, text='Base dataset (.csv):')
         self.base_upload_btn = tk.Button(base_csv_frame, text='Upload File', command=self.upload_base)
-        self.base_required_text = tk.StringVar(value='[required]')
-        self.base_required_tag = tk.Label(base_csv_frame, textvariable=self.base_required_text, fg='red')
+        self.base_required_tag = tk.Label(base_csv_frame, text='[required]', fg='red')
 
         self.base_upload_label.pack(side='left', padx=(LEFT_MARGIN, TAG_SPACING))
         self.base_upload_btn.pack(side='right', padx=(TAG_SPACING, RIGHT_MARGIN))
@@ -44,8 +43,7 @@ class SimpleUI:
 
         self.reduction_upload_label = tk.Label(reduction_csv_frame, text='Reduction indices (.csv):')
         self.reduction_upload_btn = tk.Button(reduction_csv_frame, text='Upload File(s)', command=self.upload_reductions)
-        self.reduction_required_text = tk.StringVar(value='[required]')
-        self.reduction_required_tag = tk.Label(reduction_csv_frame, textvariable=self.reduction_required_text, fg='red')
+        self.reduction_required_tag = tk.Label(reduction_csv_frame, text='[required]', fg='red')
 
         self.reduction_upload_label.pack(side='left', padx=(LEFT_MARGIN, TAG_SPACING))
         self.reduction_upload_btn.pack(side='right', padx=(TAG_SPACING, RIGHT_MARGIN))
@@ -59,8 +57,7 @@ class SimpleUI:
         custom_models_frame.pack(fill='x', pady=(VERTICAL_SPACING, 0))
 
         self.model_upload_label = tk.Label(custom_models_frame, text='Custom Models (.keras, .pt):')
-        self.custom_optional_text = tk.StringVar(value='[optional]')
-        self.custom_optional_tag = tk.Label(custom_models_frame, textvariable=self.custom_optional_text)
+        self.custom_optional_tag = tk.Label(custom_models_frame, text='[optional]')
         self.model_upload_btn = tk.Button(custom_models_frame, text='Upload File(s)', command=self.upload_custom_models)
 
         self.model_upload_label.pack(side='left', padx=(25, TAG_SPACING))
@@ -130,7 +127,6 @@ class SimpleUI:
             for label in labels: label.pack(side='top', padx=(50, 0), anchor='w')
             self.reduction_required_tag.pack_forget()
         else:
-            self.reduction_required_text.set('[required]')
             self.reduction_required_tag.pack(side='left')
             for label in self.reduction_list_frame.winfo_children():
                 label.destroy()
@@ -154,8 +150,6 @@ class SimpleUI:
             for label in labels: label.pack(side='top', padx=(50, 0), anchor='w')
             self.custom_optional_tag.pack_forget()
         else:
-            self.custom_optional_text.set('[optional]')
-            self.custom_optional_tag.config(fg='black')
             self.custom_optional_tag.pack(side='left')
             for label in self.custom_list_frame.winfo_children():
                 label.destroy()
@@ -174,7 +168,6 @@ class SimpleUI:
             self.base_display_label.pack(side='top', padx=(50, 0), anchor='w')
         else:
             self.base_display_label.pack_forget()
-            self.base_required_text.set('[required]')
             self.base_required_tag.pack(side='left')
 
         self.base_csv_path = new_path
