@@ -39,6 +39,14 @@ class SimpleUI:
         self.base_display_var = tk.StringVar()
         self.base_display_label = tk.Label(self.base_display_frame, textvariable=self.base_display_var) # dont pack until user uploads a csv
 
+        # Input shape field
+        shape_frame=Frame(root)
+        shape_frame.pack(fill='x', pady=VERTICAL_SPACING)
+        self.shape_label = tk.Label(shape_frame, text='Input Shape (comma separated, no batch dim):')
+        self.shape_input = tk.Entry(shape_frame)
+        self.shape_label.pack(side='left', padx=LEFT_MARGIN)
+        self.shape_input.pack(side='right', padx=RIGHT_MARGIN)
+
         # Index csv upload button
         reduction_csv_frame=Frame(root)
         reduction_csv_frame.pack(fill='x', pady=(VERTICAL_SPACING, 0))
@@ -101,14 +109,6 @@ class SimpleUI:
         self.resnet_50.set(True)
         self.efficient_net.set(True)
         self.mobile_net.set(True)
-        
-        # Text input field
-        shape_frame=Frame(root)
-        shape_frame.pack(fill='x', pady=VERTICAL_SPACING)
-        self.shape_label = tk.Label(shape_frame, text='Input Shape (comma separated, no batch dim):')
-        self.shape_input = tk.Entry(shape_frame)
-        self.shape_label.pack(side='left', padx=LEFT_MARGIN)
-        self.shape_input.pack(side='right', padx=RIGHT_MARGIN)
         
         # Submit button
         self.submit_btn = tk.Button(root, text='Submit', command=self.submit)
