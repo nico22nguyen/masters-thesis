@@ -35,7 +35,7 @@ class SimpleUI:
 
         # Index csv upload button
         reduction_csv_frame=Frame(root)
-        reduction_csv_frame.pack(fill='x', pady=(10, 0))
+        reduction_csv_frame.pack(fill='x', pady=(20, 0))
 
         self.reduction_upload_label = tk.Label(reduction_csv_frame, text='Reduction indices (.csv):')
         self.reduction_upload_btn = tk.Button(reduction_csv_frame, text='Upload File(s)', command=self.upload_reductions)
@@ -51,7 +51,7 @@ class SimpleUI:
         
         # Custom models upload button
         custom_models_frame=Frame(root)
-        custom_models_frame.pack(fill='x', pady=(10, 0))
+        custom_models_frame.pack(fill='x', pady=(20, 0))
 
         self.model_upload_label = tk.Label(custom_models_frame, text='Custom Models (.keras, .pt):')
         self.custom_optional_text = tk.StringVar(value='[optional]')
@@ -69,7 +69,7 @@ class SimpleUI:
         default_models_label_frame=Frame(root)
         default_models_label_frame.pack(fill='x')
         self.default_models_label = tk.Label(default_models_label_frame, text='Default Models:')
-        self.default_models_label.pack(side='left', padx=25, pady=(10, 0))
+        self.default_models_label.pack(side='left', padx=25, pady=(20, 0))
 
         default_models_frame=Frame(root)
         default_models_frame.pack()
@@ -100,7 +100,7 @@ class SimpleUI:
         
         # Text input field
         shape_frame=Frame(root)
-        shape_frame.pack(fill='x', pady=10)
+        shape_frame.pack(fill='x', pady=20)
         self.shape_label = tk.Label(shape_frame, text='Input Shape (comma separated, no batch dim):')
         self.shape_input = tk.Entry(shape_frame)
         self.shape_label.pack(side='left', padx=25)
@@ -108,7 +108,7 @@ class SimpleUI:
         
         # Submit button
         self.submit_btn = tk.Button(root, text='Submit', command=self.submit)
-        self.submit_btn.pack(pady=10)
+        self.submit_btn.pack(pady=20)
 
     def upload_reductions(self):
         new_paths = filedialog.askopenfilenames(title='Select Files')
