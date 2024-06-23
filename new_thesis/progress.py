@@ -14,7 +14,7 @@ class ProgressPage:
 		self.root.geometry('600x600')
 		
 		self.reduction_status_frame=tk.Frame(self.root)
-		self.reduction_status_frame.pack(fill='x', pady=(20, 0))
+		self.reduction_status_frame.pack(fill='x', pady=(20, 0), padx=20)
 
 		self.reduction_label_vars: list[tk.StringVar] = []
 		self.reduction_labels = []
@@ -23,18 +23,21 @@ class ProgressPage:
 			label = tk.Label(self.reduction_status_frame, textvariable=var, font=('TkDefaultFont', 12))
 			self.reduction_label_vars.append(var)
 			self.reduction_labels.append(label)
-			label.pack(side='top', padx=(10, 0), anchor='w')
+			label.pack(side='top', anchor='w')
 		
 		# Start button
 		self.start_btn = tk.Button(self.root, text='Start', command=self.start, width=10)
 		self.start_btn.pack(pady=25)
 
 		# Progress bars
+		self.progress_frame = tk.Frame(self.root)
+		self.progress_frame.pack(fill='x')
+
 		self.progress_labels = []
 		self.progress_bars = []
 		for model_num in range(len(test_suite.model_garden.model_generators)):
-			label = tk.Label(self.root, text=f'Model {model_num + 1} progress')
-			progress_bar = ttk.Progressbar(self.root, orient="horizontal", length=400, mode="determinate")
+			label = tk.Label(self.progress_frame, text=f'Model {model_num + 1} progress')
+			progress_bar = ttk.Progressbar(self.progress_frame, orient="horizontal", length=400, mode="determinate")
 
 			self.progress_labels.append(label)
 			self.progress_bars.append(progress_bar)
@@ -87,5 +90,16 @@ class ProgressPage:
 			epochs_completed += 1
 			self.root.update_idletasks()
 
-		# display these nicely eventually
-		print(acc)
+		results = [(self.get_file_name(path), avg_acc) for path, avg_acc in zip(self.reduced_csvs, acc)]
+		results = sorted(results, key=lambda x: x[1], reverse=True)
+
+		self.progress_frame.destroy()
+		
+		results_frame = tk.Frame(self.root)
+		results_frame.pack(fill='x')
+
+		tk.Label(results_frame,  text='Results (avg validation accuracy)', font=('TkDefaultFont', 16)).pack(pady=(0, 10))
+		for file_name, avg_acc in results:
+			tk.Label(results_frame,  text=f'"{file_name}":\t\t\t{avg_acc*100:.2f}%', font=('TkDefaultFont', 12)).pack(pady=(0, 5))
+
+		self.root.update_idletasks()
