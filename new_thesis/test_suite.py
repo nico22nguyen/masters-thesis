@@ -66,13 +66,13 @@ class Tester:
 		
 		accuracies = []
 		for index_csv_path in reduced_csvs:
-			print(f'evaluating: {index_csv_path.split("/")[-1]}...')
 			indices = pd.read_csv(index_csv_path, header=None).to_numpy().squeeze()
 			reduced_x, reduced_y = self.reduce_dataset(indices)
 
 			acclist = []
-			for i, (_, model_generator) in enumerate(self.model_garden.model_generators):
+			for model_name, model_generator in self.model_garden.model_generators:
 				model: ModelInterface = model_generator()
+				print(f'training {model_name}...')
 				
 				for acc, valacc in model.get_accuracies(reduced_x, reduced_y, epochs=self.epochs, batch_size=self.batch_size, validation_data=validation):
 					print(f'acc: {acc}, valacc: {valacc}')
@@ -80,7 +80,6 @@ class Tester:
 					if self.tk_root:
 						self.tk_root.update()
 
-				print(f"  MODEL {i + 1}: train acc = {acc:.5f} val acc = {valacc:.5f}")
 				acclist.append(valacc)
 
 				# clean up, important for conserving VRAM

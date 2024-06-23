@@ -75,7 +75,6 @@ class ProgressPage:
 
 			# last epoch of last model
 			if model_index == len(self.progress_bars) - 1 and epoch_index == self.test_suite.epochs - 1:
-				print(f'last epoch of reduction!: acc: {acc}, reduction_index: {reduction_index}')
 				# update label with accuracy
 				self.update_reduction_label(reduction_index, 'Complete')
 
