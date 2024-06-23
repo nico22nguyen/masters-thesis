@@ -61,7 +61,7 @@ class ProgressPage:
 		self.update_reduction_label(0, 'In Progress')
 		self.root.update_idletasks()
 
-		for acc in self.test_suite.evaluate_reductions_live(self.reduced_csvs, validation=(val_x, val_y)):
+		for acc in self.test_suite.evaluate_reductions(self.reduced_csvs, validation=(val_x, val_y)):
 			epoch_index = epochs_completed % self.test_suite.epochs
 			model_index = (epochs_completed // self.test_suite.epochs) % len(self.progress_bars)
 			reduction_index = epochs_completed // (self.test_suite.epochs * len(self.progress_bars))

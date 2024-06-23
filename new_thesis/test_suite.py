@@ -28,38 +28,8 @@ class Tester:
 		# define models used for evaluation
 		custom_models = self.parse_custom_model_paths(custom_model_paths) if custom_model_paths else []
 		self.model_garden = ModelGarden(shape, self.num_classes, default_models, custom_models)
-
-	def evaluate_reductions(self, reduced_csvs: list[str], validation: tuple[np.ndarray, np.ndarray]) -> list[float]:
-		'''Each csv in `reduced_csvs` should be a newline separated list of integers.
-			- It is assumed that size(indices) <= size(base)
-		'''
 		
-		accuracies = []
-		for index_csv_path in reduced_csvs:
-			print(f'evaluating: {index_csv_path.split("/")[-1]}...')
-			indices = pd.read_csv(index_csv_path, header=None).to_numpy().squeeze()
-			reduced_x, reduced_y = self.reduce_dataset(indices)
-
-			acclist = []
-			for i, model_generator in enumerate(self.model_garden.model_generators):
-				# train model and record training/validation accuracy
-				model: ModelInterface = model_generator()
-				
-				acc, valacc = model.get_accuracies(reduced_x, reduced_y, epochs=self.epochs, batch_size=self.batch_size, validation_data=validation)
-				# del model
-				# acc = history.history['categorical_accuracy'][-1]
-				# valacc = history.history['val_categorical_accuracy'][-1]
-				print(f"  MODEL {i + 1}: train acc = {acc:.5f} val acc = {valacc:.5f}")
-
-				acclist.append(valacc)
-
-				# clean up, important for conserving VRAM
-				# del history
-				gc.collect()
-	
-			accuracies.append(np.array(acclist).mean())
-		
-	def evaluate_reductions_live(self, reduced_csvs: list[str], validation: tuple[np.ndarray, np.ndarray]):
+	def evaluate_reductions(self, reduced_csvs: list[str], validation: tuple[np.ndarray, np.ndarray]):
 		'''Each csv in `reduced_csvs` should be a newline separated list of integers.
 			- It is assumed that size(indices) <= size(base)
 		'''
