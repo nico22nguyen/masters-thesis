@@ -10,7 +10,7 @@ class ModelInterface:
 	def __init__(self, model) -> None:
 		self.model = model
 
-	def get_accuracies(self, x: ndarray, y: ndarray, epochs: int, batch_size: int, validation_data: tuple[ndarray, ndarray]) -> tuple[float, float]:
+	def get_accuracies(self, x: ndarray, y: ndarray, epochs: int, batch_size: int, validation_data: tuple[ndarray, ndarray]):
 		pass
 
 	@staticmethod
@@ -20,13 +20,16 @@ class ModelInterface:
 class TensorFlowModel(ModelInterface):
 	def __init__(self, model: tf.keras.Model) -> None:
 		super().__init__(model)
+		self.model = model
 
-	def get_accuracies(self, x: ndarray, y: ndarray, epochs: int, batch_size: int, validation_data: tuple[ndarray, ndarray]) -> tuple[float, float]:
-		history = self.model.fit(x, y, epochs=epochs, batch_size=batch_size, verbose=1, validation_data=validation_data)
-		acc = history.history['categorical_accuracy'][-1]
-		valacc = history.history['val_categorical_accuracy'][-1]
-
-		return acc, valacc
+	def get_accuracies(self, x: ndarray, y: ndarray, epochs: int, batch_size: int, validation_data: tuple[ndarray, ndarray]):
+		# Train the model
+		for _ in range(epochs):
+			history = self.model.fit(x, y, epochs=1, batch_size=batch_size, validation_data=validation_data, verbose=0)
+			acc = history.history['categorical_accuracy'][-1]
+			valacc = history.history['val_categorical_accuracy'][-1]
+			yield acc, valacc
+			del history, acc, valacc
 
 	@staticmethod
 	def load_model(path: str) -> Self:
@@ -44,7 +47,7 @@ class TorchModel(ModelInterface):
 		model = model.to('cuda')
 		self.model = torch.nn.DataParallel(model)
 
-	def get_accuracies(self, x: ndarray, y: ndarray, epochs: int, batch_size: int, validation_data: tuple[ndarray, ndarray]) -> tuple[float, float]:
+	def get_accuracies(self, x: ndarray, y: ndarray, epochs: int, batch_size: int, validation_data: tuple[ndarray, ndarray]):
 		weights_dtype = next(self.model.parameters()).dtype
 
 		train_set = CustomDataset(x, y, x_dtype=weights_dtype)
@@ -57,6 +60,7 @@ class TorchModel(ModelInterface):
 		for _ in range(epochs):
 			acc = self.train(train_loader)
 			val_acc = self.test(test_loader)
+			yield acc, val_acc
 		
 		return acc, val_acc
 

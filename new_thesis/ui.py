@@ -214,7 +214,7 @@ class SimpleUI:
             selected_models.append(MODEL.MOBILE_NET)
         
         print('initializing test suite...')
-        test_suite = Tester(self.base_csv_path, input_shape, self.custom_model_paths, selected_models, epochs=10)
+        test_suite = Tester(self.base_csv_path, input_shape, self.custom_model_paths, selected_models, epochs=10, tk_root = self.root)
         self.progress_window = ProgressPage(self.root, test_suite, self.reduction_csv_paths)
         print('success')
 

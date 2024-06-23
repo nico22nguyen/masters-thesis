@@ -4,10 +4,11 @@ from model_garden import ModelGarden
 import gc
 import numpy as np
 import pandas as pd
+import tkinter as tk
 from keras.utils import to_categorical
 
 class Tester:
-	def __init__(self, base_csv: str, shape: tuple[int, ...], custom_model_paths=[], default_models=[], epochs=100, learning_rate=4e-4, batch_size=256) -> None:
+	def __init__(self, base_csv: str, shape: tuple[int, ...], custom_model_paths=[], default_models=[], epochs=100, learning_rate=4e-4, batch_size=256, tk_root: tk.Tk=None) -> None:
 		'''Expects csv to be in the following format:
 			1. One row per sample in dataset
 			2. First column specifies class (integer value)
@@ -22,6 +23,7 @@ class Tester:
 		self.epochs = epochs
 		self.learning_rate = learning_rate
 		self.batch_size = batch_size
+		self.tk_root = tk_root
 
 		# define models used for evaluation
 		custom_models = self.parse_custom_model_paths(custom_model_paths) if custom_model_paths else []
@@ -70,22 +72,18 @@ class Tester:
 
 			acclist = []
 			for i, model_generator in enumerate(self.model_garden.model_generators):
-				print(f'model generator: {i}')
-				# train model and record training/validation accuracy
 				model: ModelInterface = model_generator()
 				
-				acc, valacc = model.get_accuracies(reduced_x, reduced_y, epochs=self.epochs, batch_size=self.batch_size, validation_data=validation)
-				# del model
-				# acc = history.history['categorical_accuracy'][-1]
-				# valacc = history.history['val_categorical_accuracy'][-1]
-				print(f"  MODEL {i + 1}: train acc = {acc:.5f} val acc = {valacc:.5f}")
+				for acc, valacc in model.get_accuracies(reduced_x, reduced_y, epochs=self.epochs, batch_size=self.batch_size, validation_data=validation):
+					print(f'acc: {acc}, valacc: {valacc}')
+					yield valacc
+					if self.tk_root:
+						self.tk_root.update()
 
+				print(f"  MODEL {i + 1}: train acc = {acc:.5f} val acc = {valacc:.5f}")
 				acclist.append(valacc)
-				yield valacc
-				print('yielded valacc')
 
 				# clean up, important for conserving VRAM
-				# del history
 				gc.collect()
 	
 			accuracies.append(np.array(acclist).mean())
