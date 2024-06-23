@@ -33,7 +33,8 @@ class TensorFlowModel(ModelInterface):
 
 	@staticmethod
 	def load_model(path: str) -> Self:
-		return load_model(path)
+		model = load_model(path)
+		return TensorFlowModel(model)
 	
 class TorchModel(ModelInterface):
 	def __init__(self, model: torch.nn.Module) -> None:
@@ -104,7 +105,8 @@ class TorchModel(ModelInterface):
 
 	@staticmethod
 	def load_model(path: str) -> Self:
-		return torch.jit.load(path)
+		model = torch.jit.load(path)
+		return TorchModel(model)
 
 class CustomDataset(Dataset):
 	def __init__(self, x: ndarray, y: ndarray, x_dtype=None, y_dtype=None):
