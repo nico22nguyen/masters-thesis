@@ -71,7 +71,7 @@ class Tester:
 			reduced_x, reduced_y = self.reduce_dataset(indices)
 
 			acclist = []
-			for i, model_generator in enumerate(self.model_garden.model_generators):
+			for i, (_, model_generator) in enumerate(self.model_garden.model_generators):
 				model: ModelInterface = model_generator()
 				
 				for acc, valacc in model.get_accuracies(reduced_x, reduced_y, epochs=self.epochs, batch_size=self.batch_size, validation_data=validation):
@@ -104,10 +104,11 @@ class Tester:
 		
 		return x, y
 	
-	def parse_custom_model_paths(self, custom_model_paths: list[str]) -> list[ModelInterface]:
+	def parse_custom_model_paths(self, custom_model_paths: list[str]) -> list[tuple[str, ModelInterface]]:
 		custom_models = []
 		for path in custom_model_paths:
-			file_extension = path.split('.')[-1]
+			file_path, file_extension = path.split('.')
+			file_name = file_path.split('/')[-1]
 			if file_extension == 'keras':
 				custom_model = TensorFlowModel.load_model(path)
 			elif file_extension == 'pt':
@@ -115,7 +116,7 @@ class Tester:
 			else:
 				raise ValueError(f'Unexpected file extension: {file_extension}')
 			
-			custom_models.append(custom_model)
+			custom_models.append((file_name, custom_model))
 		return custom_models
 
 if __name__ == '__main__':

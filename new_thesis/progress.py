@@ -35,8 +35,8 @@ class ProgressPage:
 
 		self.progress_labels = []
 		self.progress_bars = []
-		for model_num in range(len(test_suite.model_garden.model_generators)):
-			label = tk.Label(self.progress_frame, text=f'Model {model_num + 1} progress')
+		for model_name, _ in test_suite.model_garden.model_generators:
+			label = tk.Label(self.progress_frame, text=model_name)
 			progress_bar = ttk.Progressbar(self.progress_frame, orient="horizontal", length=400, mode="determinate")
 
 			self.progress_labels.append(label)
