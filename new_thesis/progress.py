@@ -64,7 +64,7 @@ class ProgressPage:
 		for acc in self.test_suite.evaluate_reductions_live(self.reduced_csvs, validation=(val_x, val_y)):
 			epoch_index = epochs_completed % self.test_suite.epochs
 			model_index = (epochs_completed // self.test_suite.epochs) % len(self.progress_bars)
-			reduction_index = (epochs_completed * len(self.progress_bars)) // self.test_suite.epochs
+			reduction_index = epochs_completed // (self.test_suite.epochs * len(self.progress_bars))
 
 			# loop is done, `acc` holds list of average accuracies per reduction
 			if reduction_index == len(self.reduced_csvs):
