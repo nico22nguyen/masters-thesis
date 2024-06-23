@@ -45,7 +45,7 @@ class Tester:
 				print(f'training {model_name}...')
 				
 				for acc, valacc in model.get_accuracies(reduced_x, reduced_y, epochs=self.epochs, batch_size=self.batch_size, validation_data=validation):
-					print(f'acc: {acc}, valacc: {valacc}')
+					print(f'\tacc: {acc}, valacc: {valacc}')
 					yield valacc
 					if self.tk_root:
 						self.tk_root.update()
