@@ -1,6 +1,7 @@
+import math
 import torch
 from typing_extensions import Self
-from numpy import ndarray
+from numpy import ndarray, random
 import tensorflow as tf
 
 from keras.models import load_model
@@ -11,6 +12,9 @@ class ModelInterface:
 		self.model = model
 
 	def get_accuracies(self, x: ndarray, y: ndarray, epochs: int, batch_size: int, validation_data: tuple[ndarray, ndarray]):
+		pass
+
+	def reset_weights(self):
 		pass
 
 	@staticmethod
@@ -30,6 +34,23 @@ class TensorFlowModel(ModelInterface):
 			valacc = history.history['val_categorical_accuracy'][-1]
 			yield acc, valacc
 			del history, acc, valacc
+
+	# inspired by https://stackoverflow.com/a/77474877.
+	# very hacky, don't love this solution
+	def reset_weights(self):
+		for l in self.model.layers:
+			if hasattr(l,'kernel_initializer'):
+				if hasattr(l.kernel_initializer, 'seed'):
+					l.kernel_initializer.__init__(seed=random.randint(1e6))
+				l.kernel.assign(l.kernel_initializer(tf.shape(l.kernel)))
+			if hasattr(l,'bias_initializer'):
+				if hasattr(l.bias_initializer, 'seed'):
+					l.bias_initializer.__init__(seed=random.randint(1e6))
+				l.bias.assign(l.bias_initializer(tf.shape(l.bias)))
+			if hasattr(l,'recurrent_initializer'):
+				if hasattr(l.recurrent_initializer, 'seed'):
+					l.recurrent_initializer.__init__(seed=random.randint(1e6))
+				l.recurrent_kernel.assign(l.recurrent_initializer(tf.shape(l.recurrent_kernel)))
 
 	@staticmethod
 	def load_model(path: str) -> Self:
@@ -102,6 +123,22 @@ class TorchModel(ModelInterface):
 				correct += predicted.eq(targets_direct).sum().item()
 
 		return correct / total
+
+	def reset_weights(self):
+		# Iterate over all named parameters in the scripted module
+		for name, param in self.model.named_parameters(recurse=True):
+				# Apply weight initialization
+				if param.dim() > 1:
+						torch.nn.init.kaiming_uniform_(param, a=math.sqrt(5))
+				# Apply bias initialization
+				elif param.dim() == 1:
+						fan_in, _ = torch.nn.init._calculate_fan_in_and_fan_out(param.unsqueeze(0))
+						bound = 1 / math.sqrt(fan_in)
+						torch.nn.init.uniform_(param, -bound, bound)
+
+		for name, buffer in self.model.named_buffers():
+				if 'running_mean' in name or 'running_var' in name:
+						buffer.fill_(0 if 'mean' in name else 1)
 
 	@staticmethod
 	def load_model(path: str) -> Self:

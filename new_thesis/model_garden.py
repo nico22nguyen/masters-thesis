@@ -35,12 +35,18 @@ class ModelGarden:
 			models.append((model_identifier.value, model_generator))
 		return models
 	
+	def make_custom_model_generator(self, model: ModelInterface):
+		def model_wrapper():
+			model.reset_weights()
+			return model
+		
+		return model_wrapper
+	
 	# wrap each custom model in a function so we can call it like the others
-	# is this enough? its probably returning the same instance of the model, so it's "resuming" training instead of starting from scratch.
 	def parse_custom_model_list(self, custom_model_list: list[ModelInterface]) -> list:
 		custom_models = []
 		for model_name, model in custom_model_list:
-			custom_models.append((model_name, lambda: model))
+			custom_models.append((model_name, self.make_custom_model_generator(model)))
 		return custom_models
 	
 	def resnet_50(self) -> ModelInterface:
