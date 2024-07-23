@@ -1,4 +1,4 @@
-from model_interfaces import ModelInterface, TensorFlowModel, TorchModel
+from model_interfaces import ModelInterface
 from model_garden import ModelGarden
 
 import gc
@@ -26,8 +26,7 @@ class Tester:
 		self.tk_root = tk_root
 
 		# define models used for evaluation
-		custom_models = self.parse_custom_model_paths(custom_model_paths) if custom_model_paths else []
-		self.model_garden = ModelGarden(shape, self.num_classes, default_models, custom_models)
+		self.model_garden = ModelGarden(shape, self.num_classes, default_models, custom_model_paths)
 		
 	def evaluate_reductions(self, reduced_csvs: list[str], validation: tuple[np.ndarray, np.ndarray]):
 		'''Each csv in `reduced_csvs` should be a newline separated list of integers.
@@ -72,21 +71,6 @@ class Tester:
 		x = x.reshape(new_shape) 
 		
 		return x, y
-	
-	def parse_custom_model_paths(self, custom_model_paths: list[str]) -> list[tuple[str, ModelInterface]]:
-		custom_models = []
-		for path in custom_model_paths:
-			file_path, file_extension = path.split('.')
-			file_name = file_path.split('/')[-1]
-			if file_extension == 'keras':
-				custom_model = TensorFlowModel.load_model(path)
-			elif file_extension == 'pt':
-				custom_model = TorchModel.load_model(path)
-			else:
-				raise ValueError(f'Unexpected file extension: {file_extension}')
-			
-			custom_models.append((file_name, custom_model))
-		return custom_models
 
 if __name__ == '__main__':
 	from model_garden import MODEL

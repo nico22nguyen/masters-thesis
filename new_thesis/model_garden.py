@@ -16,10 +16,26 @@ class MODEL(Enum):
 	MOBILE_NET = 'mobile_net'
 
 class ModelGarden:
-	def __init__(self, input_shape: tuple[int, ...], num_classes: int, model_list: list[str] = [], custom_model_list: list[tuple[str, ModelInterface]] = []) -> None:
+	def __init__(self, input_shape: tuple[int, ...], num_classes: int, model_list: list[str] = [], custom_model_list: list[str] = []) -> None:
 		self.input_shape = input_shape
 		self.num_classes = num_classes
-		self.model_generators = [*self.parse_model_list(model_list), *self.parse_custom_model_list(custom_model_list)]
+		custom_models = self.parse_custom_model_paths(custom_model_list) if custom_model_list else []
+		self.model_generators = [*self.parse_model_list(model_list), *self.parse_custom_model_list(custom_models)]
+
+	def parse_custom_model_paths(self, custom_model_paths: list[str]) -> list[tuple[str, ModelInterface]]:
+		custom_models = []
+		for path in custom_model_paths:
+			file_path, file_extension = path.split('.')
+			file_name = file_path.split('/')[-1]
+			if file_extension == 'keras':
+				custom_model = TensorFlowModel.load_model(path)
+			elif file_extension == 'pt':
+				custom_model = TorchModel.load_model(path)
+			else:
+				raise ValueError(f'Unexpected file extension: {file_extension}')
+			
+			custom_models.append((file_name, custom_model))
+		return custom_models
 
 	def parse_model_list(self, model_list: list[MODEL]) -> list:
 		models = []
