@@ -63,7 +63,7 @@ class Tester:
 		reduced_base = self.base.iloc[indices]
 
 		# separate to x, y
-		y = to_categorical(reduced_base[0].to_numpy(), 10) # y is first column
+		y = to_categorical(reduced_base[0].to_numpy(), self.num_classes) # y is first column
 		x = reduced_base.drop(0, axis=1).to_numpy() # x is remaining columns
 
 		# ensure x is reshaped to original dimensions
