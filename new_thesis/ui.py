@@ -86,11 +86,11 @@ class SimpleUI:
         default_models_frame=Frame(root)
         default_models_frame.pack()
 
-        self.resnet_simple = tk.IntVar()
-        self.resnet_34 = tk.IntVar()
-        self.resnet_50 = tk.IntVar()
-        self.efficient_net = tk.IntVar()
-        self.mobile_net = tk.IntVar()
+        self.resnet_simple = tk.BooleanVar()
+        self.resnet_34 = tk.BooleanVar()
+        self.resnet_50 = tk.BooleanVar()
+        self.efficient_net = tk.BooleanVar()
+        self.mobile_net = tk.BooleanVar()
 
         self.resent_simple_btn = tk.Checkbutton(default_models_frame, text='Resnet (Simple)', variable=self.resnet_simple)
         self.resnet_34_btn = tk.Checkbutton(default_models_frame, text='Resnet 34', variable=self.resnet_34)
