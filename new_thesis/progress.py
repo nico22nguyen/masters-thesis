@@ -1,14 +1,18 @@
 import numpy as np
+import pandas as pd
 import tkinter as tk
 from tkinter import ttk
 
 from test_suite import Tester
 
 class ProgressPage:
-	def __init__(self, parent_root: tk.Tk, test_suite: Tester, reduced_csvs: list[str]) -> None:
+	def __init__(self, parent_root: tk.Tk, test_suite: Tester, reduced_csvs: list[str], validation_csv: str) -> None:
 		self.root = tk.Toplevel(parent_root)
 		self.test_suite = test_suite
 		self.reduced_csvs = reduced_csvs
+
+		validation = pd.read_csv(validation_csv, header=None)
+		self.validation = test_suite.prep_data(validation)
 
 		self.root.title('Test Progress')
 		self.root.geometry('600x600')
@@ -57,11 +61,10 @@ class ProgressPage:
 
 	def run_test_suite(self):
 		epochs_completed = 0
-		val_x, val_y = self.test_suite.reduce_dataset(np.random.randint(0, self.test_suite.base.shape[0], 1000))
 		self.update_reduction_label(0, 'In Progress')
 		self.root.update_idletasks()
 
-		for acc in self.test_suite.evaluate_reductions(self.reduced_csvs, validation=(val_x, val_y)):
+		for acc in self.test_suite.evaluate_reductions(self.reduced_csvs, self.validation):
 			epoch_index = epochs_completed % self.test_suite.epochs
 			model_index = (epochs_completed // self.test_suite.epochs) % len(self.progress_bars)
 			reduction_index = epochs_completed // (self.test_suite.epochs * len(self.progress_bars))

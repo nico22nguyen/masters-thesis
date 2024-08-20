@@ -62,6 +62,24 @@ class SimpleUI:
         self.reduction_list_frame=Frame(root)
         self.reduction_list_frame.pack(fill='x')
         
+        # Validation csv upload button
+        validation_csv_frame=Frame(root)
+        validation_csv_frame.pack(fill='x', pady=(10, 0))
+
+        self.validation_upload_label = tk.Label(validation_csv_frame, text='Validation dataset (.csv):')
+        self.validation_upload_btn = tk.Button(validation_csv_frame, text='Upload File', command=self.upload_validation)
+        self.validation_required_tag = tk.Label(validation_csv_frame, text='[required]', fg='red')
+
+        self.validation_upload_label.pack(side='left', padx=(LEFT_MARGIN, TAG_SPACING))
+        self.validation_upload_btn.pack(side='right', padx=(TAG_SPACING, RIGHT_MARGIN))
+        self.validation_required_tag.pack(side='left')
+        
+        self.validation_display_frame=Frame(root)
+        self.validation_display_frame.pack(fill='x')
+
+        self.validation_display_var = tk.StringVar()
+        self.validation_display_label = tk.Label(self.validation_display_frame, textvariable=self.validation_display_var) # dont pack until user uploads a csv
+
         # Custom models upload button
         custom_models_frame=Frame(root)
         custom_models_frame.pack(fill='x', pady=(VERTICAL_SPACING, 0))
@@ -174,6 +192,22 @@ class SimpleUI:
 
         self.base_csv_path = new_path
 
+    def upload_validation(self):
+        new_path = filedialog.askopenfilename(title='Select File')
+        if new_path:
+            if new_path.split('.')[-1] != 'csv':
+                messagebox.showerror('Upload Failed', f'Previous upload failed: File must be .csv.\nUploaded file was: {new_path}')
+                return
+
+            self.validation_required_tag.pack_forget()
+            self.validation_display_var.set(f'- {new_path}')
+            self.validation_display_label.pack(side='top', padx=(50, 0), anchor='w')
+        else:
+            self.validation_display_label.pack_forget()
+            self.validation_required_tag.pack(side='left')
+
+        self.validation_csv_path = new_path
+
     def submit(self):
         shape_input = self.shape_input.get()
         
@@ -181,6 +215,7 @@ class SimpleUI:
         required = {
             'Base csv path': self.base_csv_path,
             'Reduction csv path(s)': self.reduction_csv_paths,
+            'Validation dataset': self.validation_csv_path,
             'Input shape': shape_input
         }
         missing = [key for key in required if not required[key]]
@@ -215,5 +250,5 @@ class SimpleUI:
         
         print('initializing test suite...')
         test_suite = Tester(self.base_csv_path, input_shape, self.custom_model_paths, selected_models, epochs=10, tk_root = self.root)
-        self.progress_window = ProgressPage(self.root, test_suite, self.reduction_csv_paths)
+        self.progress_window = ProgressPage(self.root, test_suite, self.reduction_csv_paths, self.validation_csv_path)
         print('success')

@@ -36,7 +36,8 @@ class Tester:
 		accuracies = []
 		for index_csv_path in reduced_csvs:
 			indices = pd.read_csv(index_csv_path, header=None).to_numpy().squeeze()
-			reduced_x, reduced_y = self.reduce_dataset(indices)
+			reduced_base = self.base.iloc[indices]
+			reduced_x, reduced_y = self.prep_data(reduced_base)
 
 			acclist = []
 			for model_name, model_generator in self.model_garden.model_generators:
@@ -58,13 +59,10 @@ class Tester:
 
 		yield accuracies
 		
-	def reduce_dataset(self, indices: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
-		# reduce base by indices
-		reduced_base = self.base.iloc[indices]
-
+	def prep_data(self, df: pd.DataFrame) -> tuple[np.ndarray, np.ndarray]:
 		# separate to x, y
-		y = to_categorical(reduced_base[0].to_numpy(), self.num_classes) # y is first column
-		x = reduced_base.drop(0, axis=1).to_numpy() # x is remaining columns
+		y = to_categorical(df[0].to_numpy(), self.num_classes) # y is first column
+		x = df.drop(0, axis=1).to_numpy() # x is remaining columns
 
 		# ensure x is reshaped to original dimensions
 		new_shape = (x.shape[0],) + self.shape
@@ -77,7 +75,7 @@ if __name__ == '__main__':
 	print('Testing load_base_csv() on cifar csv:\n')
 	print('Loading csv...')
 	tester = Tester('datasets/cifar_base.csv', (32, 32, 3), default_models=[MODEL.RESNET_34, MODEL.RESNET_34])
-	val_x, val_y = tester.reduce_dataset(np.random.randint(0, tester.base.shape[0], 1000))
+	val_x, val_y = tester.prep_data(np.random.randint(0, tester.base.shape[0], 1000))
 	accuracies = tester.evaluate_reductions(['datasets/cifar_indices_1.csv', 'datasets/cifar_indices_2.csv', 'datasets/cifar_indices_3.csv'], (val_x, val_y))
 	print(accuracies)
 
