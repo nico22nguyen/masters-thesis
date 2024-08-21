@@ -30,7 +30,8 @@ class ProgressPage:
 			label.pack(side='top', anchor='w')
 		
 		# Start button
-		self.start_btn = tk.Button(self.root, text='Start', command=self.run_test_suite, width=10)
+		self.start_text_var = tk.StringVar(value='Start')
+		self.start_btn = tk.Button(self.root, textvariable=self.start_text_var, command=self.handle_start_cancel, width=10)
 		self.start_btn.pack(pady=25)
 
 		# Progress bars
@@ -59,6 +60,13 @@ class ProgressPage:
 		file_name = self.get_file_name(self.reduced_csvs[reduction_index])
 		self.reduction_label_vars[reduction_index].set(f'"{file_name}" reduction evaluation status: {status}')
 
+	def handle_start_cancel(self):
+		if self.start_text_var.get() == 'Cancel':
+			self.root.destroy()
+		else:
+			self.start_text_var.set('Cancel')
+			self.run_test_suite()
+	
 	def run_test_suite(self):
 		epochs_completed = 0
 		self.update_reduction_label(0, 'In Progress')
