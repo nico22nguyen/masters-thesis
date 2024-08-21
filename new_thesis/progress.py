@@ -61,7 +61,7 @@ class ProgressPage:
 		self.reduction_label_vars[reduction_index].set(f'"{file_name}" reduction evaluation status: {status}')
 
 	def handle_start_cancel(self):
-		if self.start_text_var.get() == 'Cancel':
+		if self.start_text_var.get() == 'Cancel' or self.start_text_var.get() == 'Back':
 			self.root.destroy()
 		else:
 			self.start_text_var.set('Cancel')
@@ -112,4 +112,5 @@ class ProgressPage:
 		for file_name, avg_acc in results:
 			tk.Label(results_frame,  text=f'"{file_name}":\t\t\t{avg_acc*100:.2f}%', font=('TkDefaultFont', 12)).pack(pady=(0, 5))
 
+		self.start_text_var.set('Back')
 		self.root.update_idletasks()
